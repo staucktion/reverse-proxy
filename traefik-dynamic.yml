@@ -1,3 +1,11 @@
+#################################################################### Cert
+tls:
+  stores:
+    default:
+      defaultCertificate:
+        certFile: /etc/traefik/certs/selfsigned.crt
+        keyFile: /etc/traefik/certs/selfsigned.key
+
 http:
 #################################################################### Routers
   routers:
@@ -6,8 +14,7 @@ http:
       rule: "Host(`staucktion-local.com.tr`) && PathPrefix(`/traefik`) || HeaderRegexp(`Referer`, `(?i).*traefik.*`)"
       entryPoints: websecure
       service: api@internal
-      tls:
-        certResolver: lets
+      tls: true
       middlewares:
         - middleware-strip-traefik
 
@@ -15,15 +22,13 @@ http:
       rule: "Host(`staucktion-local.com.tr`)"
       entryPoints: websecure
       service: service-web-ui
-      tls:
-        certResolver: lets
+      tls: true
 
     router-web-api:
       rule: "Host(`staucktion-local.com.tr`) && PathPrefix(`/api`)"
       entryPoints: websecure
       service: service-web-api
-      tls:
-        certResolver: lets
+      tls: true
       middlewares:
         - middleware-strip-web-api
 
