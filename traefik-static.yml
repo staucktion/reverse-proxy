@@ -32,3 +32,11 @@ entryPoints:
     address: ":443"
     forwardedHeaders:
       insecure: true
+
+certificatesResolvers:
+  lets:
+    acme:
+      email: admin@admin.com
+      storage: /etc/traefik/acme.json
+      httpChallenge:
+        entryPoint: web
