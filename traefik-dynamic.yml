@@ -61,15 +61,6 @@ http:
         - middleware-strip-bank-ui
       priority: 2
 
-    router-pg-admin:
-      rule: "Host(`st.local.net`) && PathPrefix(`/pg-admin`) || HeaderRegexp(`Cookie`, `(?i).*pga4_session*`)"
-      entryPoints: websecure
-      service: service-pg-admin
-      tls: true
-      middlewares:
-        - middleware-strip-pg-admin
-      priority: 2
-
 #################################################################### Services
   services:
 
@@ -113,15 +104,6 @@ http:
           interval: "10s"
           timeout: "6s"
 
-    service-pg-admin:
-      loadBalancer:
-        servers:
-          - url: "http://pg-admin"
-        healthCheck:
-          path: /
-          interval: "10s"
-          timeout: "6s"
-
 #################################################################### Middlewares
   middlewares:
 
@@ -150,8 +132,3 @@ http:
       stripPrefix:
         prefixes:
           - "/bank-api"
-
-    middleware-strip-pg-admin:
-      stripPrefix:
-        prefixes:
-          - "/pg-admin"
