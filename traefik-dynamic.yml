@@ -1,0 +1,54 @@
+http:
+#################################################################### Routers
+  routers:
+
+    router-traefik:
+      rule: "Host(`micro-local.com.tr`) && PathPrefix(`/traefik`) || HeaderRegexp(`Referer`, `(?i).*traefik.*`)"
+      entryPoints: websecure
+      service: api@internal
+      tls:
+        certResolver: lets
+      middlewares:
+        - middleware-strip-traefik
+
+    router-web-ui:
+      rule: "Host(`staucktion-local.com.tr`)"
+      entryPoints: websecure
+      service: service-web-ui
+      tls:
+        certResolver: lets
+
+    # router-web-api:
+    #   rule: "Host(`staucktion-local.com.tr`) && PathPrefix(`/api`)"
+    #   entryPoints: websecure
+    #   service: service-web-api
+    #   tls:
+    #     certResolver: lets
+    #   middlewares:
+    #     - middleware-strip-web-api
+
+#################################################################### Services
+  services:
+
+    service-web-ui:
+      loadBalancer:
+        servers:
+          - url: "http://web-ui"
+          - url: "http://host.docker.internal:8004"
+        healthCheck:
+          path: /
+          interval: "10s"
+          timeout: "6s"
+
+#################################################################### Middlewares
+  middlewares:
+
+    middleware-strip-traefik:
+      stripPrefix:
+        prefixes:
+          - "/traefik"
+
+    # middleware-strip-web-api:
+    #   stripPrefix:
+    #     prefixes:
+    #       - "/api"
