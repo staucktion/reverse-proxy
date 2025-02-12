@@ -3,7 +3,7 @@ http:
   routers:
 
     router-traefik:
-      rule: "Host(`micro-local.com.tr`) && PathPrefix(`/traefik`) || HeaderRegexp(`Referer`, `(?i).*traefik.*`)"
+      rule: "Host(`staucktion-local.com.tr`) && PathPrefix(`/traefik`) || HeaderRegexp(`Referer`, `(?i).*traefik.*`)"
       entryPoints: websecure
       service: api@internal
       tls:
@@ -18,14 +18,14 @@ http:
       tls:
         certResolver: lets
 
-    # router-web-api:
-    #   rule: "Host(`staucktion-local.com.tr`) && PathPrefix(`/api`)"
-    #   entryPoints: websecure
-    #   service: service-web-api
-    #   tls:
-    #     certResolver: lets
-    #   middlewares:
-    #     - middleware-strip-web-api
+    router-web-api:
+      rule: "Host(`staucktion-local.com.tr`) && PathPrefix(`/api`)"
+      entryPoints: websecure
+      service: service-web-api
+      tls:
+        certResolver: lets
+      middlewares:
+        - middleware-strip-web-api
 
 #################################################################### Services
   services:
@@ -34,9 +34,19 @@ http:
       loadBalancer:
         servers:
           - url: "http://web-ui"
-          - url: "http://host.docker.internal:8004"
+          - url: "http://host.docker.internal:8003"
         healthCheck:
           path: /
+          interval: "10s"
+          timeout: "6s"
+
+    service-web-api:
+      loadBalancer:
+        servers:
+          - url: "http://web-api"
+          - url: "http://host.docker.internal:8004"
+        healthCheck:
+          path: /health
           interval: "10s"
           timeout: "6s"
 
@@ -48,7 +58,7 @@ http:
         prefixes:
           - "/traefik"
 
-    # middleware-strip-web-api:
-    #   stripPrefix:
-    #     prefixes:
-    #       - "/api"
+    middleware-strip-web-api:
+      stripPrefix:
+        prefixes:
+          - "/api"
