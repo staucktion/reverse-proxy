@@ -1,0 +1,42 @@
+providers:
+  file:
+    directory: /etc/traefik/dynamic
+    watch: true
+
+api:
+  dashboard: true
+  insecure: false
+  debug: true
+
+# enable request logging
+# accessLog:
+#   format: "json"
+
+log:
+  maxSize: 1
+  level: ERROR
+  # level: INFO
+  # level: TRACE
+
+entryPoints:
+  web:
+    address: ":80"
+    forwardedHeaders:
+      insecure: true
+    http:
+      redirections:
+        entryPoint:
+          to: websecure
+          scheme: https
+  websecure:
+    address: ":443"
+    forwardedHeaders:
+      insecure: true
+
+certificatesResolvers:
+  lets:
+    acme:
+      email: admin@admin.com
+      storage: /etc/traefik/acme.json
+      httpChallenge:
+        entryPoint: web
