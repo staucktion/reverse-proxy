@@ -17,20 +17,58 @@ http:
       tls: true
       middlewares:
         - middleware-strip-traefik
+      priority: 3
+      
+    www-to-non-www:
+      rule: "Host(`www.st.local.net`)"
+      entryPoints: websecure
+      service: api@internal
+      tls: true
+      middlewares:
+        - www-to-non-www
 
     router-web-ui:
       rule: "Host(`st.local.net`)"
       entryPoints: websecure
       service: service-web-ui
       tls: true
+      priority: 1
 
     router-web-api:
-      rule: "Host(`st.local.net`) && PathPrefix(`/api`)"
+      rule: "Host(`st.local.net`) && PathPrefix(`/web-api`)"
       entryPoints: websecure
       service: service-web-api
       tls: true
       middlewares:
         - middleware-strip-web-api
+      priority: 3
+
+    router-bank-api:
+      rule: "Host(`st.local.net`) && PathPrefix(`/bank-api`)"
+      entryPoints: websecure
+      service: service-bank-api
+      tls: true
+      middlewares:
+        - middleware-strip-bank-api
+      priority: 3
+
+    router-bank-ui:
+      rule: "Host(`st.local.net`) && PathPrefix(`/bank-ui`) || HeaderRegexp(`Referer`, `(?i).*bank-ui.*`)"
+      entryPoints: websecure
+      service: service-bank-ui
+      tls: true
+      middlewares:
+        - middleware-strip-bank-ui
+      priority: 2
+
+    router-pg-admin:
+      rule: "Host(`st.local.net`) && PathPrefix(`/pg-admin`) || HeaderRegexp(`Cookie`, `(?i).*pga4_session*`)"
+      entryPoints: websecure
+      service: service-pg-admin
+      tls: true
+      middlewares:
+        - middleware-strip-pg-admin
+      priority: 2
 
 #################################################################### Services
   services:
@@ -55,8 +93,43 @@ http:
           interval: "10s"
           timeout: "6s"
 
+    service-bank-ui:
+      loadBalancer:
+        servers:
+          - url: "http://bank-ui"
+          - url: "http://host.docker.internal:8002"
+        healthCheck:
+          path: /
+          interval: "10s"
+          timeout: "6s"
+
+    service-bank-api:
+      loadBalancer:
+        servers:
+          - url: "http://bank-api"
+          - url: "http://host.docker.internal:8001"
+        healthCheck:
+          path: /health
+          interval: "10s"
+          timeout: "6s"
+
+    service-pg-admin:
+      loadBalancer:
+        servers:
+          - url: "http://pg-admin"
+        healthCheck:
+          path: /
+          interval: "10s"
+          timeout: "6s"
+
 #################################################################### Middlewares
   middlewares:
+
+    www-to-non-www:
+      redirectRegex:
+        regex: "^https?://www\\.(.*)"
+        replacement: "https://$1"
+        permanent: true
 
     middleware-strip-traefik:
       stripPrefix:
@@ -66,4 +139,19 @@ http:
     middleware-strip-web-api:
       stripPrefix:
         prefixes:
-          - "/api"
+          - "/web-api"
+
+    middleware-strip-bank-ui:
+      stripPrefix:
+        prefixes:
+          - "/bank-ui"
+
+    middleware-strip-bank-api:
+      stripPrefix:
+        prefixes:
+          - "/bank-api"
+
+    middleware-strip-pg-admin:
+      stripPrefix:
+        prefixes:
+          - "/pg-admin"
