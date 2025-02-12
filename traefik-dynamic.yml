@@ -11,7 +11,7 @@ http:
   routers:
 
     router-traefik:
-      rule: "Host(`staucktion-local.com.tr`) && PathPrefix(`/traefik`) || HeaderRegexp(`Referer`, `(?i).*traefik.*`)"
+      rule: "Host(`development.net`) && PathPrefix(`/traefik`) || HeaderRegexp(`Referer`, `(?i).*traefik.*`)"
       entryPoints: websecure
       service: api@internal
       tls: true
@@ -19,13 +19,13 @@ http:
         - middleware-strip-traefik
 
     router-web-ui:
-      rule: "Host(`staucktion-local.com.tr`)"
+      rule: "Host(`development.net`)"
       entryPoints: websecure
       service: service-web-ui
       tls: true
 
     router-web-api:
-      rule: "Host(`staucktion-local.com.tr`) && PathPrefix(`/api`)"
+      rule: "Host(`development.net`) && PathPrefix(`/api`)"
       entryPoints: websecure
       service: service-web-api
       tls: true
