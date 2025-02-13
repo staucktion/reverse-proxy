@@ -1,4 +1,4 @@
-# Reverse Proxy
+# Reverse Proxy [v1.0.0]
 
 <h2 id="system-startup">🚀 System Startup</h2>
 
