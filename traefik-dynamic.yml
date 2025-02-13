@@ -3,7 +3,7 @@ http:
   routers:
 
     router-traefik:
-      rule: "Host(`st.local.net`) && PathPrefix(`/traefik`) || HeaderRegexp(`Referer`, `(?i).*traefik.*`)"
+      rule: "Host(`staucktion.com.tr`) && PathPrefix(`/traefik`) || HeaderRegexp(`Referer`, `(?i).*traefik.*`)"
       entryPoints: websecure
       service: api@internal
       tls:
@@ -13,7 +13,7 @@ http:
       priority: 3
       
     www-to-non-www:
-      rule: "Host(`www.st.local.net`)"
+      rule: "Host(`www.staucktion.com.tr`)"
       entryPoints: websecure
       service: api@internal
       tls:
@@ -22,7 +22,7 @@ http:
         - www-to-non-www
 
     router-web-ui:
-      rule: "Host(`st.local.net`)"
+      rule: "Host(`staucktion.com.tr`)"
       entryPoints: websecure
       service: service-web-ui
       tls:
@@ -30,7 +30,7 @@ http:
       priority: 1
 
     router-web-api:
-      rule: "Host(`st.local.net`) && PathPrefix(`/web-api`)"
+      rule: "Host(`staucktion.com.tr`) && PathPrefix(`/web-api`)"
       entryPoints: websecure
       service: service-web-api
       tls:
@@ -40,7 +40,7 @@ http:
       priority: 3
 
     router-bank-api:
-      rule: "Host(`st.local.net`) && PathPrefix(`/bank-api`)"
+      rule: "Host(`staucktion.com.tr`) && PathPrefix(`/bank-api`)"
       entryPoints: websecure
       service: service-bank-api
       tls:
@@ -50,7 +50,7 @@ http:
       priority: 3
 
     router-bank-ui:
-      rule: "Host(`st.local.net`) && PathPrefix(`/bank-ui`) || HeaderRegexp(`Referer`, `(?i).*bank-ui.*`)"
+      rule: "Host(`staucktion.com.tr`) && PathPrefix(`/bank-ui`) || HeaderRegexp(`Referer`, `(?i).*bank-ui.*`)"
       entryPoints: websecure
       service: service-bank-ui
       tls:
@@ -130,3 +130,5 @@ http:
       stripPrefix:
         prefixes:
           - "/bank-api"
+
+          
