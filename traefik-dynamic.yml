@@ -68,6 +68,15 @@ http:
       tls: true
       priority: 3
 
+    router-portainer:
+      rule: "Host(`st.local.net`) && PathPrefix(`/portainer`) || HeaderRegexp(`Referer`, `(?i).*portainer.*`)"
+      entryPoints: websecure
+      service: service-portainer
+      tls: true
+      middlewares:
+        - middleware-strip-portainer
+      priority: 3
+
 #################################################################### Services
   services:
 
@@ -120,6 +129,15 @@ http:
           interval: "10s"
           timeout: "6s"
 
+    service-portainer:
+      loadBalancer:
+        servers:
+          - url: "http://portainer:9000"
+        healthCheck:
+          path: /
+          interval: "1s"
+          timeout: "6s"
+
 #################################################################### Middlewares
   middlewares:
 
@@ -148,3 +166,8 @@ http:
       stripPrefix:
         prefixes:
           - "/bank-api"
+
+    middleware-strip-portainer:
+      stripPrefix:
+        prefixes:
+          - "/portainer"
