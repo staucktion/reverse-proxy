@@ -16,6 +16,7 @@ http:
       service: api@internal
       tls: true
       middlewares:
+        - middleware-basic-auth
         - middleware-strip-traefik
       priority: 3
       
@@ -66,6 +67,8 @@ http:
       entryPoints: websecure
       service: service-pgadmin
       tls: true
+      middlewares:
+        - middleware-basic-auth
       priority: 3
 
     router-portainer:
@@ -74,6 +77,7 @@ http:
       service: service-portainer
       tls: true
       middlewares:
+        - middleware-basic-auth
         - middleware-strip-portainer
       priority: 3
 
@@ -171,3 +175,8 @@ http:
       stripPrefix:
         prefixes:
           - "/portainer"
+
+    middleware-basic-auth:
+      basicAuth:
+        users:
+          - "admin:$apr1$v/vIHQwd$wz6PoQ1..00LDnYIeR2Ld/"
