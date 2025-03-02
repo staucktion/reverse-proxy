@@ -9,6 +9,7 @@ http:
       tls:
         certResolver: lets
       middlewares:
+        - middleware-basic-auth
         - middleware-strip-traefik
       priority: 3
       
@@ -59,6 +60,25 @@ http:
         - middleware-strip-bank-ui
       priority: 2
 
+    router-pgadmin:
+      rule: "Host(`st.local.net`) && PathPrefix(`/pgadmin`)"
+      entryPoints: websecure
+      service: service-pgadmin
+      tls: true
+      middlewares:
+        - middleware-basic-auth
+      priority: 3
+
+    router-portainer:
+      rule: "Host(`st.local.net`) && PathPrefix(`/portainer`) || HeaderRegexp(`Referer`, `(?i).*portainer.*`)"
+      entryPoints: websecure
+      service: service-portainer
+      tls: true
+      middlewares:
+        - middleware-basic-auth
+        - middleware-strip-portainer
+      priority: 3
+
 #################################################################### Services
   services:
 
@@ -98,6 +118,24 @@ http:
           interval: "10s"
           timeout: "6s"
 
+    service-pgadmin:
+      loadBalancer:
+        servers:
+          - url: "http://pg-admin"
+        healthCheck:
+          path: /pgadmin
+          interval: "10s"
+          timeout: "6s"
+
+    service-portainer:
+      loadBalancer:
+        servers:
+          - url: "http://portainer:9000"
+        healthCheck:
+          path: /
+          interval: "1s"
+          timeout: "6s"
+
 #################################################################### Middlewares
   middlewares:
 
@@ -126,3 +164,13 @@ http:
       stripPrefix:
         prefixes:
           - "/bank-api"
+
+    middleware-strip-portainer:
+      stripPrefix:
+        prefixes:
+          - "/portainer"
+
+    middleware-basic-auth:
+      basicAuth:
+        users:
+          - "admin:$apr1$v/vIHQwd$wz6PoQ1..00LDnYIeR2Ld/"
