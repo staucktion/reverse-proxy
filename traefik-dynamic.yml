@@ -1,3 +1,11 @@
+#################################################################### Cert
+tls:
+  stores:
+    default:
+      defaultCertificate:
+        certFile: /etc/traefik/certs/selfsigned.crt
+        keyFile: /etc/traefik/certs/selfsigned.key
+
 http:
 #################################################################### Routers
   routers:
@@ -6,8 +14,7 @@ http:
       rule: "Host(`staucktion.com.tr`) && PathPrefix(`/traefik`) || HeaderRegexp(`Referer`, `(?i).*traefik.*`)"
       entryPoints: websecure
       service: api@internal
-      tls:
-        certResolver: lets
+      tls: true
       middlewares:
         - middleware-basic-auth
         - middleware-strip-traefik
@@ -17,8 +24,7 @@ http:
       rule: "Host(`www.staucktion.com.tr`)"
       entryPoints: websecure
       service: api@internal
-      tls:
-        certResolver: lets
+      tls: true
       middlewares:
         - www-to-non-www
 
@@ -26,16 +32,14 @@ http:
       rule: "Host(`staucktion.com.tr`)"
       entryPoints: websecure
       service: service-web-ui
-      tls:
-        certResolver: lets
+      tls: true
       priority: 1
 
     router-web-api:
       rule: "Host(`staucktion.com.tr`) && PathPrefix(`/web-api`)"
       entryPoints: websecure
       service: service-web-api
-      tls:
-        certResolver: lets
+      tls: true
       middlewares:
         - middleware-strip-web-api
       priority: 3
@@ -44,8 +48,7 @@ http:
       rule: "Host(`staucktion.com.tr`) && PathPrefix(`/bank-api`)"
       entryPoints: websecure
       service: service-bank-api
-      tls:
-        certResolver: lets
+      tls: true
       middlewares:
         - middleware-strip-bank-api
       priority: 3
@@ -54,8 +57,7 @@ http:
       rule: "Host(`staucktion.com.tr`) && PathPrefix(`/bank-ui`) || HeaderRegexp(`Referer`, `(?i).*bank-ui.*`)"
       entryPoints: websecure
       service: service-bank-ui
-      tls:
-        certResolver: lets
+      tls: true
       middlewares:
         - middleware-strip-bank-ui
       priority: 2
@@ -173,4 +175,4 @@ http:
     middleware-basic-auth:
       basicAuth:
         users:
-          - "admin:$apr1$v/vIHQwd$wz6PoQ1..00LDnYIeR2Ld/"
+          - "admin:$apr1$CXP1ALEY$JvxSSYQgW/oBCkyrcEjIK."
