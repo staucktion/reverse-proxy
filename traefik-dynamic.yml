@@ -61,7 +61,7 @@ http:
       priority: 2
 
     router-pgadmin:
-      rule: "Host(`st.local.net`) && PathPrefix(`/pgadmin`)"
+      rule: "Host(`staucktion.com.tr`) && PathPrefix(`/pgadmin`)"
       entryPoints: websecure
       service: service-pgadmin
       tls: true
@@ -70,7 +70,7 @@ http:
       priority: 3
 
     router-portainer:
-      rule: "Host(`st.local.net`) && PathPrefix(`/portainer`) || HeaderRegexp(`Referer`, `(?i).*portainer.*`)"
+      rule: "Host(`staucktion.com.tr`) && PathPrefix(`/portainer`) || HeaderRegexp(`Referer`, `(?i).*portainer.*`)"
       entryPoints: websecure
       service: service-portainer
       tls: true
