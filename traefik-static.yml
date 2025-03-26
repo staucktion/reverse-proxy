@@ -9,8 +9,7 @@ api:
   debug: true
 
 # enable request logging
-# accessLog:
-#   format: "json"
+accessLog: {}
 
 log:
   maxSize: 1
